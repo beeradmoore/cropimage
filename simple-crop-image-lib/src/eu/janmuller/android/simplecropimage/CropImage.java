@@ -63,6 +63,7 @@ public class CropImage extends MonitoredActivity {
     public static final  String SCALE                  = "scale";
     public static final  String ORIENTATION_IN_DEGREES = "orientation_in_degrees";
     public static final  String ASPECT_X               = "aspectX";
+    public static final  String ROTATION_IN_DEGREES    = "rotation_in_degrees";
     public static final  String ASPECT_Y               = "aspectY";
     public static final  String OUTPUT_X               = "outputX";
     public static final  String OUTPUT_Y               = "outputY";
@@ -79,6 +80,7 @@ public class CropImage extends MonitoredActivity {
     private       boolean               mCircleCrop      = false;
     private final Handler               mHandler         = new Handler();
 
+    private float           mRotation;
     private int             mAspectX;
     private int             mAspectY;
     private int             mOutputX;
@@ -147,6 +149,9 @@ public class CropImage extends MonitoredActivity {
 
                 throw new IllegalArgumentException("aspect_y must be integer");
             }
+                
+            mRotation = extras.getFloat(ROTATION_IN_DEGREES);
+            
             mOutputX = extras.getInt(OUTPUT_X);
             mOutputY = extras.getInt(OUTPUT_Y);
             mScale = extras.getBoolean(SCALE, true);
@@ -160,6 +165,10 @@ public class CropImage extends MonitoredActivity {
             finish();
             return;
         }
+        
+        if (mRotation > 0) {
+            mBitmap = Util.rotateImage(mBitmap, mRotation);
+		}
 
         // Make UI fullscreen.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);

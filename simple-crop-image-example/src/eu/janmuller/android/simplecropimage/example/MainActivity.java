@@ -11,6 +11,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -104,6 +105,36 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, CropImage.class);
         intent.putExtra(CropImage.IMAGE_PATH, mFileTemp.getPath());
         intent.putExtra(CropImage.SCALE, true);
+        
+        try
+		{
+			/*
+			 * Depending on the camera app it might be possible to get the orientation
+			 * of the image from its EXIF data. Pass the level of rotation to the crop
+			 * activity so it can be shown the right way up.
+			 */
+			ExifInterface exif = new ExifInterface(mFileTemp.getPath());
+			int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
+			switch (exifOrientation)
+			{
+				case ExifInterface.ORIENTATION_NORMAL:
+					intent.putExtra(CropImage.ROTATION_IN_DEGREES, 0f);
+					break;
+				case ExifInterface.ORIENTATION_ROTATE_90:
+					intent.putExtra(CropImage.ROTATION_IN_DEGREES, 90f);
+					break;
+				case ExifInterface.ORIENTATION_ROTATE_180:
+					intent.putExtra(CropImage.ROTATION_IN_DEGREES, 180f);
+					break;
+				case ExifInterface.ORIENTATION_ROTATE_270:
+					intent.putExtra(CropImage.ROTATION_IN_DEGREES, -90f);
+					break;
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 
         intent.putExtra(CropImage.ASPECT_X, 3);
         intent.putExtra(CropImage.ASPECT_Y, 2);
