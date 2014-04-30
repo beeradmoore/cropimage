@@ -37,6 +37,11 @@ class HighlightView {
     public static final int GROW_TOP_EDGE    = (1 << 3);
     public static final int GROW_BOTTOM_EDGE = (1 << 4);
     public static final int MOVE             = (1 << 5);
+    
+    
+    /** When {@true} show the arrowed rectangle at start for user guidance
+     * that the image can be zoomed In/Out*/
+    private boolean GROW_AT_START = true;
 
     public HighlightView(View ctx) {
 
@@ -132,7 +137,8 @@ class HighlightView {
 			
             canvas.drawPath(path, mOutlinePaint);
 
-            if (mMode == ModifyMode.Grow) {
+            if (mMode == ModifyMode.Grow || GROW_AT_START) {
+            	GROW_AT_START = false;
                 if (mCircle) {
                     int width = mResizeDrawableDiagonal.getIntrinsicWidth();
                     int height = mResizeDrawableDiagonal.getIntrinsicHeight();
