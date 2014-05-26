@@ -428,7 +428,7 @@ class HighlightView {
 
         mFocusPaint.setARGB(125, 50, 50, 50);
         mNoFocusPaint.setARGB(125, 50, 50, 50);
-        mOutlinePaint.setStrokeWidth(3F);
+        mOutlinePaint.setStrokeWidth(2f * mContext.getResources().getDisplayMetrics().density);
         mOutlinePaint.setStyle(Paint.Style.STROKE);
         mOutlinePaint.setAntiAlias(true);
 

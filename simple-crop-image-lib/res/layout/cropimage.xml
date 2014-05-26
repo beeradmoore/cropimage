@@ -15,13 +15,15 @@
             />
 
     <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
             android:paddingLeft="10dip"
             android:paddingRight="10dip"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:background="#05000000"
+            android:gravity="center">
 
 
         <Button
@@ -39,7 +41,7 @@
                 android:layout_height="fill_parent"
                 android:layout_toRightOf="@id/discard"
                 style="@style/CropButton"
-                android:src="@drawable/ic_rotate_left"
+                android:src="@drawable/ic_action_rotate_left"
                 />
 
         <ImageButton
@@ -48,7 +50,7 @@
                 android:layout_height="fill_parent"
                 android:layout_toRightOf="@id/rotateLeft"
                 style="@style/CropButton"
-                android:src="@drawable/ic_rotate_right"
+                android:src="@drawable/ic_action_rotate_right"
                 />
         <Button
                 android:id="@+id/save"
