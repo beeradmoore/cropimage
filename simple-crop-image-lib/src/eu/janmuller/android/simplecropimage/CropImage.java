@@ -130,8 +130,14 @@ public class CropImage extends MonitoredActivity {
 
             mImagePath = extras.getString(IMAGE_PATH);
 
-            mSaveUri = getImageUri(mImagePath);
-            mBitmap = getBitmap(mImagePath);
+            if (mImagePath != null) {
+                mSaveUri = getImageUri(mImagePath);
+                mBitmap = getBitmap(mImagePath);
+            }
+            else if (extras.containsKey(IMAGE_PATH)) {
+                mSaveUri = extras.getParcelable(IMAGE_PATH);
+                mBitmap = getBitmap(mSaveUri);
+            }
 
             if (extras.containsKey(ASPECT_X) && extras.get(ASPECT_X) instanceof Integer) {
 
@@ -208,14 +214,23 @@ public class CropImage extends MonitoredActivity {
         startFaceDetection();
     }
 
-    private Uri getImageUri(String path) {
-
-        return Uri.fromFile(new File(path));
+    private Uri getImageUri(Object path) {
+        if (path instanceof Uri) {
+            return (Uri)path;
+        }
+        else {
+            return Uri.fromFile(new File((String)path));
+        }
     }
 
-    private Bitmap getBitmap(String path) {
-
-        Uri uri = getImageUri(path);
+    private Bitmap getBitmap(Object path) {
+        Uri uri = null;
+        if (path instanceof Uri) {
+            uri = (Uri)path;
+        }
+        else {
+            uri = getImageUri(path);
+        }
         InputStream in = null;
         try {
             in = mContentResolver.openInputStream(uri);
