@@ -134,8 +134,14 @@ public class CropImage extends MonitoredActivity {
             mImagePath = extras.getString(IMAGE_PATH);
             int rotation = getImageOrientation(mImagePath);
 
-            mSaveUri = getImageUri(mImagePath);
-            mBitmap = getBitmap(mImagePath);
+            if (mImagePath != null) {
+                mSaveUri = getImageUri(mImagePath);
+                mBitmap = getBitmap(mImagePath);
+            }
+            else if (extras.containsKey(IMAGE_PATH)) {
+                mSaveUri = extras.getParcelable(IMAGE_PATH);
+                mBitmap = getBitmap(mSaveUri);
+            }
 
             if(rotation!=0){
               mBitmap = Util.rotateImage(mBitmap, rotation);
@@ -249,14 +255,24 @@ public class CropImage extends MonitoredActivity {
          return rotate;
 }
 
-    private Uri getImageUri(String path) {
 
-        return Uri.fromFile(new File(path));
+    private Uri getImageUri(Object path) {
+        if (path instanceof Uri) {
+            return (Uri)path;
+        }
+        else {
+            return Uri.fromFile(new File((String)path));
+        }
     }
 
-    private Bitmap getBitmap(String path) {
-
-        Uri uri = getImageUri(path);
+    private Bitmap getBitmap(Object path) {
+        Uri uri = null;
+        if (path instanceof Uri) {
+            uri = (Uri)path;
+        }
+        else {
+            uri = getImageUri(path);
+        }
         InputStream in = null;
         try {
             in = mContentResolver.openInputStream(uri);
