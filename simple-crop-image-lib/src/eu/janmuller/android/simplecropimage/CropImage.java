@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
+import android.media.ExifInterface;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -131,9 +132,16 @@ public class CropImage extends MonitoredActivity {
             }
 
             mImagePath = extras.getString(IMAGE_PATH);
+            int rotation = getImageOrientation(mImagePath);
 
             mSaveUri = getImageUri(mImagePath);
             mBitmap = getBitmap(mImagePath);
+
+            if(rotation!=0){
+              mBitmap = Util.rotateImage(mBitmap, rotation);
+              RotateBitmap rotateBitmap = new RotateBitmap(mBitmap);
+              mImageView.setImageRotateBitmapResetBase(rotateBitmap, true);
+            }
 
             if (extras.containsKey(ASPECT_X) && extras.get(ASPECT_X) instanceof Integer) {
 
@@ -216,6 +224,30 @@ public class CropImage extends MonitoredActivity {
                 });
         startFaceDetection();
     }
+
+    public static int getImageOrientation(String imagePath){
+      int rotate = 0;
+       try {
+           File imageFile = new File(imagePath);
+           ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+           int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                                  ExifInterface.ORIENTATION_NORMAL);
+           switch (orientation) {
+              case ExifInterface.ORIENTATION_ROTATE_270:
+                  rotate = 270;
+                  break;
+             case ExifInterface.ORIENTATION_ROTATE_180:
+                  rotate = 180;
+                  break;
+             case ExifInterface.ORIENTATION_ROTATE_90:
+                  rotate = 90;
+                  break;
+          }
+       } catch (IOException e) {
+          e.printStackTrace();
+         }
+         return rotate;
+}
 
     private Uri getImageUri(String path) {
 
